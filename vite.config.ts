@@ -1,6 +1,6 @@
-import type { UserConfig, ConfigEnv } from 'vite'
 import { loadEnv } from 'vite'
 import { resolve } from 'path'
+import type { UserConfig, ConfigEnv } from 'vite'
 import createVitePlugins from './src/plugins'
 import wrapperEnv from './src/common/utils/env'
 
@@ -30,6 +30,41 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: VITE_PORT,
       open: VITE_OPEN_BROWSER,
       cors: VITE_CORS
+
+      /**
+       * 设置代理（解决前端跨域问题）
+       * /api -> https://xxx.xxx.com
+       * ^/API -> /
+       * /api/aa/bb -> https://xxx.xxx.com/aa/bb
+       * /api/API/aa/bb -> https://xxx.xxx.com/aa/bb
+       */
+      // proxy: {
+      //   '/api': {
+      //     target: 'https://xxx.xxx.com',
+      //     changeOrigin: true,
+      //     secure: true,
+      //     rewrite: (path) => path.replace('^/API', '/')
+      //   }
+      // }
+    },
+    optimizeDeps: {
+      exclude: ['@yireen/squoosh-browser']
+    },
+    css: {
+      postcss: {
+        plugins: [
+          {
+            postcssPlugin: 'internal:charset-removal',
+            AtRule: {
+              charset: (atRule) => {
+                if (atRule.name === 'charset') {
+                  atRule.remove()
+                }
+              }
+            }
+          }
+        ]
+      }
     }
   }
 }
