@@ -1,13 +1,14 @@
 import { createApp } from 'vue'
-import styleImport from '@/common/utils/style-import'
 import router from '@/router/index'
-import { key, store } from '@/store/index'
+import { key, store } from '@/stores'
 import App from './App.vue'
-
-if (import.meta.env.MODE === 'production') {
-  import('@/common/utils/register-sw')
-}
+import i18n from '@/plugins/vue/i18n'
+import 'element-plus/theme-chalk/dark/css-vars.css'
+import '@/styles/base.styl'
+import useDirective from '@/common/directive'
 
 const app = createApp(App)
-styleImport(app)
-app.use(router).use(store, key).mount('#app')
+
+useDirective(app)
+
+app.use(router).use(store, key).use(i18n).mount('#app')
